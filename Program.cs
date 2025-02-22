@@ -3,7 +3,7 @@
 
     public const int THREADS_TO_TEST = 128;
     public const int WORK_AMOUNT_MS = 2;
-    public const int WORK_AMOUNT_MAX = 100;
+    public const int WORK_AMOUNT_MAX = 300;
 
     public static void Main(string[] args) {
       var rand = new Random();
@@ -12,10 +12,9 @@
         random_work_amounts[i] = rand.Next(10, WORK_AMOUNT_MAX);
       }
       Console.WriteLine($"Expected work count sum: {random_work_amounts.Sum().ToString("N0")}");
-      int rand_heat_amount = rand.Next(10, 100);
+      int rand_heat_amount = rand.Next(2, 20);
       Console.WriteLine($"rand_heat_amount = {rand_heat_amount}");
 
-      // Test 1:
       HeatUpTest(typeof(SimpleBrokenInteger), rand_heat_amount, random_work_amounts);
       RunTest(new SimpleBrokenInteger(), random_work_amounts, and_report:true);
 
@@ -45,6 +44,7 @@
         }
       }
       Console.WriteLine($"[ {t_ws.Name} ] HeatUpTest {rand_heat_amount} took {RuntimeDuration(begin_ts)}");
+      Console.WriteLine();
     }
 
     public static void RunTest(IWorkTrackerStrategy ws, int[] work_amounts, bool and_report=false) {
