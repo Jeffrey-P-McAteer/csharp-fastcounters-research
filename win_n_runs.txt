@@ -1,0 +1,117 @@
+Expected work count sum: 111,979
+rand_heat_amount = 11
+[ SimpleBrokenInteger ] HeatUpTest 11 took 0.608
+
+[ SimpleBrokenInteger ] Keeps an int around and directly uses += 1 to increment after work is done.
+[ SimpleBrokenInteger ] IssueWork completed at 0.53
+[ SimpleBrokenInteger ] All threads completed at 0.53
+[ SimpleBrokenInteger ] Actual work count sum: 111,979
+[ SimpleBrokenInteger ] Passes and WORKS CORRECTLY
+
+[ IntegerInterlockedIncrement ] HeatUpTest 11 took 0.590
+
+[ IntegerInterlockedIncrement ] Keeps an int around and calls Interlocked.Increment to increment after work is done.
+[ IntegerInterlockedIncrement ] IssueWork completed at 0.54
+[ IntegerInterlockedIncrement ] All threads completed at 0.54
+[ IntegerInterlockedIncrement ] Actual work count sum: 111,979
+[ IntegerInterlockedIncrement ] Passes and WORKS CORRECTLY
+
+[ ConcurrentDictionaryCounter ] HeatUpTest 11 took 0.635
+
+[ ConcurrentDictionaryCounter ] Keeps ConcurrentDictionary<string, int> around increments the string version of num_works_to_do by one for each work done.
+[ ConcurrentDictionaryCounter ] IssueWork completed at 0.55
+[ ConcurrentDictionaryCounter ] All threads completed at 0.55
+[ ConcurrentDictionaryCounter ] Actual work count sum: 111,979
+[ ConcurrentDictionaryCounter ] Passes and WORKS CORRECTLY
+
+[ SimpleIntegerAndSemaphoreSlim ] HeatUpTest 11 took 0.613
+
+[ SimpleIntegerAndSemaphoreSlim ] Keeps an int around and directly uses += 1 to increment after work is done within a guard provided by SemaphoreSlim with 1 thread available.
+[ SimpleIntegerAndSemaphoreSlim ] IssueWork completed at 0.55
+[ SimpleIntegerAndSemaphoreSlim ] All threads completed at 0.55
+[ SimpleIntegerAndSemaphoreSlim ] Actual work count sum: 111,979
+[ SimpleIntegerAndSemaphoreSlim ] Passes and WORKS CORRECTLY
+
+= = = Relative Speed = = =
+[ IntegerInterlockedIncrement ]       averaged 537,205 ticks (slowest 543,622 fastest 532,107 spread 11,515)
+[ SimpleBrokenInteger ]               averaged 547,064 ticks (slowest 575,187 fastest 533,299 spread 41,888)
+[ SimpleIntegerAndSemaphoreSlim ]     averaged 557,193 ticks (slowest 566,761 fastest 552,476 spread 14,285)
+[ ConcurrentDictionaryCounter ]       averaged 572,306 ticks (slowest 631,882 fastest 552,495 spread 79,387)
+Expected work count sum: 118,120
+rand_heat_amount = 18
+[ SimpleBrokenInteger ] HeatUpTest 18 took 1.30
+
+[ SimpleBrokenInteger ] Keeps an int around and directly uses += 1 to increment after work is done.
+[ SimpleBrokenInteger ] IssueWork completed at 0.56
+[ SimpleBrokenInteger ] All threads completed at 0.56
+[ SimpleBrokenInteger ] Actual work count sum: 118,120
+[ SimpleBrokenInteger ] Passes and WORKS CORRECTLY
+
+[ IntegerInterlockedIncrement ] HeatUpTest 18 took 1.27
+
+[ IntegerInterlockedIncrement ] Keeps an int around and calls Interlocked.Increment to increment after work is done.
+[ IntegerInterlockedIncrement ] IssueWork completed at 0.56
+[ IntegerInterlockedIncrement ] All threads completed at 0.56
+[ IntegerInterlockedIncrement ] Actual work count sum: 118,120
+[ IntegerInterlockedIncrement ] Passes and WORKS CORRECTLY
+
+[ ConcurrentDictionaryCounter ] HeatUpTest 18 took 1.85
+
+[ ConcurrentDictionaryCounter ] Keeps ConcurrentDictionary<string, int> around increments the string version of num_works_to_do by one for each work done.
+[ ConcurrentDictionaryCounter ] IssueWork completed at 0.58
+[ ConcurrentDictionaryCounter ] All threads completed at 0.59
+[ ConcurrentDictionaryCounter ] Actual work count sum: 118,120
+[ ConcurrentDictionaryCounter ] Passes and WORKS CORRECTLY
+
+[ SimpleIntegerAndSemaphoreSlim ] HeatUpTest 18 took 1.79
+
+[ SimpleIntegerAndSemaphoreSlim ] Keeps an int around and directly uses += 1 to increment after work is done within a guard provided by SemaphoreSlim with 1 thread available.
+[ SimpleIntegerAndSemaphoreSlim ] IssueWork completed at 0.59
+[ SimpleIntegerAndSemaphoreSlim ] All threads completed at 0.59
+[ SimpleIntegerAndSemaphoreSlim ] Actual work count sum: 118,120
+[ SimpleIntegerAndSemaphoreSlim ] Passes and WORKS CORRECTLY
+
+= = = Relative Speed = = =
+[ SimpleBrokenInteger ]               averaged 569,075 ticks (slowest 596,202 fastest 559,817 spread 36,385)
+[ IntegerInterlockedIncrement ]       averaged 570,517 ticks (slowest 606,567 fastest 559,171 spread 47,396)
+[ SimpleIntegerAndSemaphoreSlim ]     averaged 599,375 ticks (slowest 614,970 fastest 588,869 spread 26,101)
+[ ConcurrentDictionaryCounter ]       averaged 599,762 ticks (slowest 647,007 fastest 586,435 spread 60,572)
+Expected work count sum: 120,829
+rand_heat_amount = 5
+[ SimpleBrokenInteger ] HeatUpTest 5 took 0.301
+
+[ SimpleBrokenInteger ] Keeps an int around and directly uses += 1 to increment after work is done.
+[ SimpleBrokenInteger ] IssueWork completed at 0.57
+[ SimpleBrokenInteger ] All threads completed at 0.57
+[ SimpleBrokenInteger ] Actual work count sum: 120,829
+[ SimpleBrokenInteger ] Passes and WORKS CORRECTLY
+
+[ IntegerInterlockedIncrement ] HeatUpTest 5 took 0.290
+
+[ IntegerInterlockedIncrement ] Keeps an int around and calls Interlocked.Increment to increment after work is done.
+[ IntegerInterlockedIncrement ] IssueWork completed at 0.57
+[ IntegerInterlockedIncrement ] All threads completed at 0.57
+[ IntegerInterlockedIncrement ] Actual work count sum: 120,829
+[ IntegerInterlockedIncrement ] Passes and WORKS CORRECTLY
+
+[ ConcurrentDictionaryCounter ] HeatUpTest 5 took 0.320
+
+[ ConcurrentDictionaryCounter ] Keeps ConcurrentDictionary<string, int> around increments the string version of num_works_to_do by one for each work done.
+[ ConcurrentDictionaryCounter ] IssueWork completed at 0.59
+[ ConcurrentDictionaryCounter ] All threads completed at 0.59
+[ ConcurrentDictionaryCounter ] Actual work count sum: 120,829
+[ ConcurrentDictionaryCounter ] Passes and WORKS CORRECTLY
+
+[ SimpleIntegerAndSemaphoreSlim ] HeatUpTest 5 took 0.300
+
+[ SimpleIntegerAndSemaphoreSlim ] Keeps an int around and directly uses += 1 to increment after work is done within a guard provided by SemaphoreSlim with 1 thread available.
+[ SimpleIntegerAndSemaphoreSlim ] IssueWork completed at 0.60
+[ SimpleIntegerAndSemaphoreSlim ] All threads completed at 0.60
+[ SimpleIntegerAndSemaphoreSlim ] Actual work count sum: 120,829
+[ SimpleIntegerAndSemaphoreSlim ] Passes and WORKS CORRECTLY
+
+= = = Relative Speed = = =
+[ IntegerInterlockedIncrement ]       averaged 579,100 ticks (slowest 590,784 fastest 574,382 spread 16,402)
+[ SimpleBrokenInteger ]               averaged 590,042 ticks (slowest 608,236 fastest 575,570 spread 32,666)
+[ SimpleIntegerAndSemaphoreSlim ]     averaged 601,414 ticks (slowest 605,203 fastest 599,090 spread 6,113)
+[ ConcurrentDictionaryCounter ]       averaged 627,974 ticks (slowest 658,739 fastest 597,868 spread 60,871)
