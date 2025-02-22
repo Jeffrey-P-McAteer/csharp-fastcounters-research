@@ -21,6 +21,9 @@
       HeatUpTest(typeof(IntegerInterlockedIncrement), rand_heat_amount, random_work_amounts);
       RunTest(new IntegerInterlockedIncrement(), random_work_amounts, and_report:true);
 
+      HeatUpTest(typeof(ConcurrentDictionaryCounter), rand_heat_amount, random_work_amounts);
+      RunTest(new ConcurrentDictionaryCounter(), random_work_amounts, and_report:true);
+
     }
 
     public static string RuntimeDuration(DateTime begin) {
@@ -36,7 +39,7 @@
     public static void HeatUpTest(Type t_ws, int rand_heat_amount, int[] work_amounts) {
       var begin_ts = DateTime.Now;
       for (int i=0; i<rand_heat_amount; i+=1) {
-        object inst = Activator.CreateInstance(t_ws);
+        object? inst = Activator.CreateInstance(t_ws);
         if (inst is IWorkTrackerStrategy ws) {
           RunTest(ws, work_amounts, and_report:false);
           /*Task.WaitAll(ws.IssueWork(work_amounts));
@@ -135,6 +138,47 @@
       for (int i=0; i<num_works_to_do; i+=1) {
         await Task.Delay(Program.WORK_AMOUNT_MS);
         Interlocked.Increment(ref work_done_count);
+      }
+    }
+  }
+
+  public class ConcurrentDictionaryCounter: IWorkTrackerStrategy {
+    public string GetTestDescription() { return "Keeps ConcurrentDictionary<string, int> around increments the string version of num_works_to_do by one for each work done."; }
+
+    public List<Task> IssueWork(int[] work_amounts) {
+      List<Task> tasks = new List<Task>();
+      for (int i=0; i<work_amounts.Length; i+=1) {
+        tasks.Add(this.DoWork(work_amounts[i]));
+      }
+      return tasks;
+    }
+
+    public int ReadWorkDoneCount() {
+      int sum = 0;
+      foreach (var (k,v) in this.work_tracker) {
+        sum += v;
+      }
+      return sum;
+    }
+
+    private System.Collections.Concurrent.ConcurrentDictionary<string, int> work_tracker = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
+
+    private async Task DoWork(int num_works_to_do) {
+      string k = ""+num_works_to_do;
+      if (!work_tracker.ContainsKey(k)) {
+        work_tracker.AddOrUpdate(k, 0, (key, old_val) => 0);
+      }
+      for (int i=0; i<num_works_to_do; i+=1) {
+        await Task.Delay(Program.WORK_AMOUNT_MS);
+
+        for (int j=0; j<16; j+=1) {
+          if (work_tracker.TryGetValue(k, out int work_count)) {
+            if (work_tracker.TryUpdate(k, work_count + 1, work_count)) {
+              break;
+            }
+          }
+        }
+
       }
     }
   }
