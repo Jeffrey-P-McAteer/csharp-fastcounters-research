@@ -24,6 +24,9 @@
       HeatUpTest(typeof(ConcurrentDictionaryCounter), rand_heat_amount, random_work_amounts);
       RunTest(new ConcurrentDictionaryCounter(), random_work_amounts, and_report:true);
 
+      HeatUpTest(typeof(SimpleIntegerAndSemaphoreSlim), rand_heat_amount, random_work_amounts);
+      RunTest(new SimpleIntegerAndSemaphoreSlim(), random_work_amounts, and_report:true);
+
     }
 
     public static string RuntimeDuration(DateTime begin) {
@@ -183,6 +186,39 @@
     }
   }
 
+  public class SimpleIntegerAndSemaphoreSlim: IWorkTrackerStrategy {
+    public string GetTestDescription() { return "Keeps an int around and directly uses += 1 to increment after work is done within a guard provided by SemaphoreSlim with 1 thread available."; }
+
+    public List<Task> IssueWork(int[] work_amounts) {
+      List<Task> tasks = new List<Task>();
+      for (int i=0; i<work_amounts.Length; i+=1) {
+        tasks.Add(this.DoWork(work_amounts[i]));
+      }
+      return tasks;
+    }
+
+    public int ReadWorkDoneCount() {
+      int local_wdc = 0;
+      semaphore.Wait();
+      local_wdc = work_done_count;
+      semaphore.Release();
+      return local_wdc;
+    }
+
+    private SemaphoreSlim semaphore = new SemaphoreSlim(1);
+    private int work_done_count = 0;
+
+    private async Task DoWork(int num_works_to_do) {
+      for (int i=0; i<num_works_to_do; i+=1) {
+        await Task.Delay(Program.WORK_AMOUNT_MS);
+
+        semaphore.Wait();
+        work_done_count += 1;
+        semaphore.Release();
+
+      }
+    }
+  }
 
 
 }
