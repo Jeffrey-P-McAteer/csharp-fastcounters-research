@@ -18,6 +18,9 @@
       HeatUpTest(typeof(SimpleBrokenInteger), rand_heat_amount, random_work_amounts);
       RunTest(new SimpleBrokenInteger(), random_work_amounts, and_report:true);
 
+      HeatUpTest(typeof(IntegerInterlockedIncrement), rand_heat_amount, random_work_amounts);
+      RunTest(new IntegerInterlockedIncrement(), random_work_amounts, and_report:true);
+
     }
 
     public static string RuntimeDuration(DateTime begin) {
@@ -60,7 +63,14 @@
       Task.WaitAll(tasks);
       if (and_report) {
         Console.WriteLine($"[ {clazz_name} ] All threads completed at {RuntimeDuration(begin_ts)}");
-        Console.WriteLine($"[ {clazz_name} ] Actual work count sum: {ws.ReadWorkDoneCount().ToString("N0")}");
+        int actual_work_count = ws.ReadWorkDoneCount();
+        Console.WriteLine($"[ {clazz_name} ] Actual work count sum: {actual_work_count.ToString("N0")}");
+        if (actual_work_count == work_amounts.Sum()) {
+          Console.WriteLine($"[ {clazz_name} ] Passes and WORKS CORRECTLY");
+        }
+        else {
+          Console.WriteLine($"[ {clazz_name} ] Cannot be used and is BROKEN");
+        }
         Console.WriteLine();
       }
     }
@@ -88,14 +98,47 @@
       return work_done_count;
     }
 
-    public int work_done_count = 0;
+    private int work_done_count = 0;
 
-    public async Task DoWork(int num_works_to_do) {
+    private async Task DoWork(int num_works_to_do) {
       for (int i=0; i<num_works_to_do; i+=1) {
         await Task.Delay(Program.WORK_AMOUNT_MS);
         work_done_count += 1;
       }
     }
   }
+
+  public class IntegerInterlockedIncrement: IWorkTrackerStrategy {
+    public string GetTestDescription() { return "Keeps an int around and calls Interlocked.Increment to increment after work is done."; }
+
+    public List<Task> IssueWork(int[] work_amounts) {
+      List<Task> tasks = new List<Task>();
+      for (int i=0; i<work_amounts.Length; i+=1) {
+        tasks.Add(this.DoWork(work_amounts[i]));
+      }
+      return tasks;
+    }
+
+    public int ReadWorkDoneCount() {
+      long num1 = Interlocked.Read(ref work_done_count);
+      long num2 = Interlocked.Read(ref work_done_count);
+      while (num1 != num2) {
+        num1 = Interlocked.Read(ref work_done_count);
+        num2 = Interlocked.Read(ref work_done_count);
+      }
+      return (int) num1;
+    }
+
+    private long work_done_count = 0;
+
+    private async Task DoWork(int num_works_to_do) {
+      for (int i=0; i<num_works_to_do; i+=1) {
+        await Task.Delay(Program.WORK_AMOUNT_MS);
+        Interlocked.Increment(ref work_done_count);
+      }
+    }
+  }
+
+
 
 }
