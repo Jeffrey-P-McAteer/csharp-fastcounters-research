@@ -1,9 +1,8 @@
 ﻿namespace Program {
   public class Program {
 
-    public const int THREADS_TO_TEST = 128;
-    public const int WORK_AMOUNT_MS = 2;
-    public const int WORK_AMOUNT_MAX = 300;
+    public const int THREADS_TO_TEST = 256;
+    public const int WORK_AMOUNT_MAX = 900;
 
     public static void Main(string[] args) {
       var rand = new Random();
@@ -117,6 +116,28 @@
     public int ReadWorkDoneCount();
   }
 
+  public class WorkProvider {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CS1998:This async method lacks 'await' operators and will run synchronously.", Justification = "This code is supposed to run synchronously.")]
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoOptimization | System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+    public static async Task DoOneUnitOfWork() {
+      double sum = -1.0;
+      for (int i=0; i<200; i+=1) {
+        if (i % 5 == 3) {
+          sum += (double) i;
+        }
+        else if (i % 3 == 1) {
+          sum += (double) i;
+        }
+        else if (i % 2 == 0) {
+          sum *= (double) i;
+        }
+        else {
+          sum += 3.14;
+        }
+      }
+    }
+  }
+
   public class SimpleBrokenInteger: IWorkTrackerStrategy {
     public string GetTestDescription() { return "Keeps an int around and directly uses += 1 to increment after work is done."; }
 
@@ -136,7 +157,7 @@
 
     private async Task DoWork(int num_works_to_do) {
       for (int i=0; i<num_works_to_do; i+=1) {
-        await Task.Delay(Program.WORK_AMOUNT_MS);
+        await WorkProvider.DoOneUnitOfWork();
         work_done_count += 1;
       }
     }
@@ -167,7 +188,7 @@
 
     private async Task DoWork(int num_works_to_do) {
       for (int i=0; i<num_works_to_do; i+=1) {
-        await Task.Delay(Program.WORK_AMOUNT_MS);
+        await WorkProvider.DoOneUnitOfWork();
         Interlocked.Increment(ref work_done_count);
       }
     }
@@ -200,7 +221,7 @@
         work_tracker.AddOrUpdate(k, 0, (key, old_val) => 0);
       }
       for (int i=0; i<num_works_to_do; i+=1) {
-        await Task.Delay(Program.WORK_AMOUNT_MS);
+        await WorkProvider.DoOneUnitOfWork();
 
         for (int j=0; j<16; j+=1) {
           if (work_tracker.TryGetValue(k, out int work_count)) {
@@ -238,7 +259,7 @@
 
     private async Task DoWork(int num_works_to_do) {
       for (int i=0; i<num_works_to_do; i+=1) {
-        await Task.Delay(Program.WORK_AMOUNT_MS);
+        await WorkProvider.DoOneUnitOfWork();
 
         semaphore.Wait();
         work_done_count += 1;
