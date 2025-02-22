@@ -40,7 +40,8 @@
         long slowest_ticks = all_class_test_durations[name].Max(td => td.Ticks);
         long fastest_ticks = all_class_test_durations[name].Min(td => td.Ticks);
         string padding = "".PadRight((max_name_len+4) - name.Length);
-        Console.WriteLine($"[ {name} ]{padding} averaged {avg_ticks.ToString("N0")} ticks (Slowest {slowest_ticks.ToString("N0")} fastest {fastest_ticks.ToString("N0")})");
+        long spread = slowest_ticks-fastest_ticks;
+        Console.WriteLine($"[ {name} ]{padding} averaged {avg_ticks.ToString("N0")} ticks (slowest {slowest_ticks.ToString("N0")} fastest {fastest_ticks.ToString("N0")} spread {spread.ToString("N0")})");
       }
 
     }
