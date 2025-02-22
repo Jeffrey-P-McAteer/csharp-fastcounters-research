@@ -27,6 +27,22 @@
       HeatUpTest(typeof(SimpleIntegerAndSemaphoreSlim), rand_heat_amount, random_work_amounts);
       RunTest(new SimpleIntegerAndSemaphoreSlim(), random_work_amounts, and_report:true);
 
+      // Finally report classes in order of average fastest_time
+      Console.WriteLine($"= = = Relative Speed = = =");
+      List<string> class_names = new List<string>(all_class_test_durations.Keys);
+      class_names = class_names.OrderBy(name => (double) all_class_test_durations[name].Sum(td => td.Ticks) / (double) all_class_test_durations[name].Count() ).ToList();
+      int max_name_len = 0;
+      foreach (var name in class_names) {
+        max_name_len = Math.Max(max_name_len, name.Length);
+      }
+      foreach (var name in class_names) {
+        long avg_ticks = (long) ( (double) all_class_test_durations[name].Sum(td => td.Ticks) / (double) all_class_test_durations[name].Count() );
+        long slowest_ticks = all_class_test_durations[name].Max(td => td.Ticks);
+        long fastest_ticks = all_class_test_durations[name].Min(td => td.Ticks);
+        string padding = "".PadRight((max_name_len+4) - name.Length);
+        Console.WriteLine($"[ {name} ]{padding} averaged {avg_ticks.ToString("N0")} ticks (Slowest {slowest_ticks.ToString("N0")} fastest {fastest_ticks.ToString("N0")})");
+      }
+
     }
 
     public static string RuntimeDuration(DateTime begin) {
@@ -39,12 +55,19 @@
       }
     }
 
+    private static Dictionary<string, List<TimeSpan>> all_class_test_durations = new Dictionary<string, List<TimeSpan>>();
+
     public static void HeatUpTest(Type t_ws, int rand_heat_amount, int[] work_amounts) {
+      if (!all_class_test_durations.ContainsKey(t_ws.Name)) {
+        all_class_test_durations[t_ws.Name] = new List<TimeSpan>();
+      }
       var begin_ts = DateTime.Now;
       for (int i=0; i<rand_heat_amount; i+=1) {
         object? inst = Activator.CreateInstance(t_ws);
         if (inst is IWorkTrackerStrategy ws) {
+          var once_begin_ts = DateTime.Now;
           RunTest(ws, work_amounts, and_report:false);
+          all_class_test_durations[t_ws.Name].Add(DateTime.Now - once_begin_ts);
           /*Task.WaitAll(ws.IssueWork(work_amounts));
           string work_done = ws.ReadWorkDoneCount().ToString("N0");
           if (work_done.Length == 0) {
@@ -58,6 +81,9 @@
 
     public static void RunTest(IWorkTrackerStrategy ws, int[] work_amounts, bool and_report=false) {
       string clazz_name = ws.GetType().Name;
+      if (!all_class_test_durations.ContainsKey(clazz_name)) {
+        all_class_test_durations[clazz_name] = new List<TimeSpan>();
+      }
       if (and_report) {
         Console.WriteLine($"[ {clazz_name} ] {ws.GetTestDescription()}");
       }
@@ -69,6 +95,7 @@
       Task.WaitAll(tasks);
       if (and_report) {
         Console.WriteLine($"[ {clazz_name} ] All threads completed at {RuntimeDuration(begin_ts)}");
+        all_class_test_durations[clazz_name].Add(DateTime.Now - begin_ts);
         int actual_work_count = ws.ReadWorkDoneCount();
         Console.WriteLine($"[ {clazz_name} ] Actual work count sum: {actual_work_count.ToString("N0")}");
         if (actual_work_count == work_amounts.Sum()) {
