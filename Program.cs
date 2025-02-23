@@ -121,7 +121,7 @@
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoOptimization | System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
     public static async Task DoOneUnitOfWork() {
       double sum = 1.0;
-      for (int i=0; i<200; i+=1) {
+      for (int i=0; i<100; i+=1) {
         if (i % 5 == 3) {
           sum -= (double) i;
         }
@@ -143,7 +143,7 @@
           }
           sum += 3.14;
         }
-        if (Math.Abs((int) sum) % 25 == 5) { // Statistically is hit twice per each call to DoOneUnitOfWork
+        if (i % 50 == 2) { // Statistically is hit 2x per each call to DoOneUnitOfWork
           await Task.Delay(1);
         }
       }
