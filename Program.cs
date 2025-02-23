@@ -120,10 +120,10 @@
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CS1998:This async method lacks 'await' operators and will run synchronously.", Justification = "This code is supposed to run synchronously.")]
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoOptimization | System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
     public static async Task DoOneUnitOfWork() {
-      double sum = -1.0;
+      double sum = 1.0;
       for (int i=0; i<200; i+=1) {
         if (i % 5 == 3) {
-          sum += (double) i;
+          sum -= (double) i;
         }
         else if (i % 3 == 1) {
           sum += (double) i;
@@ -132,7 +132,13 @@
           sum *= (double) i;
         }
         else {
+          if (sum < 0.0) {
+            sum += 3.14; // Give it some extra pie
+          }
           sum += 3.14;
+        }
+        if (Math.Abs((int) sum) % 100 == 5) { // Statistically is hit twice per each call to DoOneUnitOfWork
+          await Task.Delay(1);
         }
       }
     }
