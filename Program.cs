@@ -130,6 +130,12 @@
         }
         else if (i % 2 == 0) {
           sum *= (double) i;
+          if (sum > 0.0) {
+            sum -= 1;
+          }
+          else {
+            sum += 1;
+          }
         }
         else {
           if (sum < 0.0) {
@@ -137,7 +143,7 @@
           }
           sum += 3.14;
         }
-        if (Math.Abs((int) sum) % 100 == 5) { // Statistically is hit twice per each call to DoOneUnitOfWork
+        if (Math.Abs((int) sum) % 25 == 5) { // Statistically is hit twice per each call to DoOneUnitOfWork
           await Task.Delay(1);
         }
       }
